@@ -54,14 +54,14 @@ function CharacterFallback() {
   return (
     <div className="w-full h-full min-h-[380px] flex flex-col items-center justify-center p-8 text-center rounded-3xl border border-white/10 bg-gradient-to-b from-dark-surface to-[#07090E]">
       <div className="relative mb-6">
-        <div className="w-28 h-28 rounded-full border-2 border-accent/40 bg-dark-card flex items-center justify-center shadow-[0_0_30px_rgba(255,42,59,0.2)]">
-          <span className="text-4xl font-mono text-white">⚡</span>
+        <div className="w-28 h-28 rounded-full border-2 border-purple-500/40 bg-dark-card flex items-center justify-center shadow-[0_0_30px_rgba(168,85,247,0.25)]">
+          <span className="text-4xl">👑</span>
         </div>
-        <span className="absolute -bottom-1 -right-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono text-accent bg-accent/15 border border-accent/30">
-          Dev Mode
+        <span className="absolute -bottom-1 -right-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono text-purple-400 bg-purple-500/15 border border-purple-500/30">
+          Dzaky Edition
         </span>
       </div>
-      <h3 className="text-lg font-bold text-white mb-2">Interactive Character</h3>
+      <h3 className="text-lg font-bold text-white mb-2">Dzaky Edition Vinyl Toy</h3>
       <p className="text-xs text-neutral-400 max-w-xs leading-relaxed font-mono">
         Optimized performance tier enabled for your device environment.
       </p>
@@ -120,13 +120,13 @@ export default function CharacterScene({ className = '' }) {
       onTouchEnd={handlePointerLeave}
       className={`relative w-full h-full min-h-[420px] sm:min-h-[480px] lg:min-h-[540px] flex items-center justify-center select-none overflow-hidden ${className}`}
     >
-      {/* Subtle backdrop ambient vignette behind 3D model */}
-      <div className="absolute inset-0 pointer-events-none bg-radial from-accent/10 via-transparent to-transparent opacity-60 blur-2xl" />
+      {/* Subtle backdrop ambient vignette with purple neon accents */}
+      <div className="absolute inset-0 pointer-events-none bg-radial from-purple-600/15 via-transparent to-transparent opacity-70 blur-2xl" />
 
       {/* Interactive 3D Canvas */}
       <CanvasErrorBoundary fallback={<CharacterFallback />}>
         <Canvas
-          camera={{ position: [0, 0.15, 3.4], fov: 42 }}
+          camera={{ position: [0, 0.16, 3.25], fov: 42 }}
           dpr={[1, 1.5]}
           gl={{
             antialias: true,
@@ -144,18 +144,18 @@ export default function CharacterScene({ className = '' }) {
         </Canvas>
       </CanvasErrorBoundary>
 
-      {/* Interactive Floating Hint Pill */}
+      {/* Interactive Floating Hint Pill: "Dzaky Edition" */}
       <div
-        className={`absolute bottom-3 right-4 sm:bottom-4 sm:right-6 pointer-events-none transition-all duration-500 flex items-center gap-2 px-3 py-1.5 rounded-full border border-white/10 bg-dark-surface/80 backdrop-blur-md shadow-lg ${
+        className={`absolute bottom-3 right-4 sm:bottom-4 sm:right-6 pointer-events-none transition-all duration-500 flex items-center gap-2 px-3 py-1.5 rounded-full border border-purple-500/20 bg-dark-surface/85 backdrop-blur-md shadow-lg ${
           isInteracting ? 'opacity-40 scale-95' : 'opacity-90 scale-100'
         }`}
       >
         <span className="relative flex h-2 w-2">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75" />
-          <span className="relative inline-flex rounded-full h-2 w-2 bg-accent" />
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-purple-400 opacity-75" />
+          <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500" />
         </span>
         <span className="text-[11px] font-mono text-neutral-300">
-          Move cursor to interact
+          Dzaky Edition • Move cursor
         </span>
       </div>
     </div>
