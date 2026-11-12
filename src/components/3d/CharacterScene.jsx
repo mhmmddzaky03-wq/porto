@@ -52,18 +52,18 @@ function checkWebGLSupport() {
  */
 function CharacterFallback() {
   return (
-    <div className="w-full h-full min-h-[380px] flex flex-col items-center justify-center p-8 text-center rounded-3xl border border-white/10 bg-gradient-to-b from-dark-surface to-[#07090E]">
+    <div className="w-full h-full min-h-[460px] flex flex-col items-center justify-center p-8 text-center rounded-3xl border border-white/10 bg-gradient-to-b from-dark-surface to-[#07090E]">
       <div className="relative mb-6">
-        <div className="w-28 h-28 rounded-full border-2 border-purple-500/40 bg-dark-card flex items-center justify-center shadow-[0_0_30px_rgba(168,85,247,0.25)]">
-          <span className="text-4xl">👑</span>
+        <div className="w-32 h-32 rounded-full border-2 border-purple-500/40 bg-dark-card flex items-center justify-center shadow-[0_0_35px_rgba(168,85,247,0.3)]">
+          <span className="text-5xl">👑</span>
         </div>
-        <span className="absolute -bottom-1 -right-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono text-purple-400 bg-purple-500/15 border border-purple-500/30">
+        <span className="absolute -bottom-1 -right-1 px-3 py-1 rounded-full text-[11px] font-mono text-purple-400 bg-purple-500/15 border border-purple-500/30">
           Dzaky Edition
         </span>
       </div>
-      <h3 className="text-lg font-bold text-white mb-2">Dzaky Edition Vinyl Toy</h3>
+      <h3 className="text-xl font-bold text-white mb-2">Dzaky Edition Vinyl Toy</h3>
       <p className="text-xs text-neutral-400 max-w-xs leading-relaxed font-mono">
-        Optimized performance tier enabled for your device environment.
+        Optimized high-performance tier enabled for your device environment.
       </p>
     </div>
   );
@@ -94,13 +94,12 @@ export default function CharacterScene({ className = '' }) {
     const x = ((clientX - rect.left) / rect.width) * 2 - 1;
     const y = -(((clientY - rect.top) / rect.height) * 2 - 1);
 
-    // Clamp coordinates to prevent extreme dislocation
     pointerRef.current.x = Math.max(-1.2, Math.min(1.2, x));
     pointerRef.current.y = Math.max(-1.2, Math.min(1.2, y));
     setIsInteracting(true);
   }, []);
 
-  // When pointer leaves, smoothly decay target back toward center (0, 0)
+  // Smoothly decay target back toward center (0, 0)
   const handlePointerLeave = useCallback(() => {
     setIsInteracting(false);
     pointerRef.current.x = 0;
@@ -118,15 +117,15 @@ export default function CharacterScene({ className = '' }) {
       onMouseLeave={handlePointerLeave}
       onTouchMove={handlePointerMove}
       onTouchEnd={handlePointerLeave}
-      className={`relative w-full h-full min-h-[420px] sm:min-h-[480px] lg:min-h-[540px] flex items-center justify-center select-none overflow-hidden ${className}`}
+      className={`relative w-full h-full min-h-[480px] sm:min-h-[560px] lg:min-h-[640px] flex items-center justify-center select-none overflow-hidden ${className}`}
     >
-      {/* Subtle backdrop ambient vignette with purple neon accents */}
-      <div className="absolute inset-0 pointer-events-none bg-radial from-purple-600/15 via-transparent to-transparent opacity-70 blur-2xl" />
+      {/* Soft atmospheric background radial purple ambient glow */}
+      <div className="absolute inset-0 pointer-events-none bg-radial from-purple-600/20 via-purple-900/5 to-transparent opacity-80 blur-3xl" />
 
       {/* Interactive 3D Canvas */}
       <CanvasErrorBoundary fallback={<CharacterFallback />}>
         <Canvas
-          camera={{ position: [0, 0.16, 3.25], fov: 42 }}
+          camera={{ position: [0, 0.08, 4.1], fov: 42 }}
           dpr={[1, 1.5]}
           gl={{
             antialias: true,
@@ -144,9 +143,9 @@ export default function CharacterScene({ className = '' }) {
         </Canvas>
       </CanvasErrorBoundary>
 
-      {/* Interactive Floating Hint Pill: "Dzaky Edition" */}
+      {/* Floating Interactive Badge Pill */}
       <div
-        className={`absolute bottom-3 right-4 sm:bottom-4 sm:right-6 pointer-events-none transition-all duration-500 flex items-center gap-2 px-3 py-1.5 rounded-full border border-purple-500/20 bg-dark-surface/85 backdrop-blur-md shadow-lg ${
+        className={`absolute bottom-4 right-4 sm:bottom-6 sm:right-8 pointer-events-none transition-all duration-500 flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-purple-500/25 bg-dark-surface/85 backdrop-blur-md shadow-lg ${
           isInteracting ? 'opacity-40 scale-95' : 'opacity-90 scale-100'
         }`}
       >
@@ -155,7 +154,7 @@ export default function CharacterScene({ className = '' }) {
           <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500" />
         </span>
         <span className="text-[11px] font-mono text-neutral-300">
-          Dzaky Edition • Move cursor
+          Dzaky Edition • Interactive 3D
         </span>
       </div>
     </div>

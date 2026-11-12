@@ -91,9 +91,9 @@ export default function HeroSection() {
           </div>
         </div>
 
-        {/* Right Column: Genuine Interactive 3D Human Character */}
+        {/* Right Column: Genuine Interactive 3D Vinyl Toy Character */}
         <div className="lg:col-span-5 flex items-center justify-center relative w-full">
-          <div className="relative w-full max-w-[460px] lg:max-w-none aspect-[4/5] sm:aspect-square lg:aspect-[4/5] rounded-3xl border border-white/10 bg-gradient-to-b from-dark-surface/50 to-[#07090E]/80 backdrop-blur-sm p-2 shadow-2xl overflow-hidden group">
+          <div className="relative w-full max-w-[540px] lg:max-w-none aspect-[4/5] sm:aspect-square lg:aspect-[5/6] rounded-3xl border border-purple-500/20 bg-gradient-to-b from-dark-surface/40 via-dark-surface/20 to-[#07090E]/80 backdrop-blur-sm shadow-[0_0_50px_rgba(168,85,247,0.14)] overflow-hidden group">
             <CharacterScene />
           </div>
         </div>
