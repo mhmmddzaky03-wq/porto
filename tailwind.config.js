@@ -8,16 +8,18 @@ export default {
   theme: {
     extend: {
       colors: {
-        bg: {
-          dark: '#101010',
-          light: '#F3F2EE',
+        dark: {
+          bg: '#07090E',
+          surface: '#0D111A',
+          card: '#111622',
+          border: 'rgba(255, 255, 255, 0.08)',
+          hover: 'rgba(255, 255, 255, 0.04)',
         },
-        card: {
-          dark: '#161616',
-          light: '#FFFFFF',
+        accent: {
+          DEFAULT: '#FF2A3B',
+          glow: 'rgba(255, 42, 59, 0.15)',
+          muted: '#C0222F',
         },
-        accent: '#FF202A',
-        muted: '#8E8D8A',
       },
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
