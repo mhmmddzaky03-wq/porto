@@ -1,13 +1,13 @@
 import React, { useRef, useState, useEffect, useCallback, Suspense, Component } from 'react';
 import { Canvas } from '@react-three/fiber';
-import { ContactShadows } from '@react-three/drei';
+import { ContactShadows, useGLTF } from '@react-three/drei';
 import SceneLighting from './SceneLighting';
 import CharacterModel from './CharacterModel';
 import FloatingObjects from './FloatingObjects';
-import RiggedCharacter, { preloadModel } from './RiggedCharacter';
+import RiggedCharacter from './RiggedCharacter';
 
 // Preload the GLB model in the browser early
-preloadModel('/models/dzaky-avatar.glb');
+useGLTF.preload('/models/dzaky-avatar.glb');
 
 /**
  * ModelErrorBoundary
@@ -148,7 +148,7 @@ export default function CharacterScene({ className = '' }) {
       onMouseLeave={handlePointerLeave}
       onTouchMove={handlePointerMove}
       onTouchEnd={handlePointerLeave}
-      className={`relative w-full h-full min-h-[480px] sm:min-h-[560px] lg:min-h-[640px] flex items-center justify-center select-none overflow-hidden ${className}`}
+      className={`relative w-full h-full flex items-center justify-center select-none overflow-hidden ${className}`}
     >
       {/* Soft atmospheric background radial purple ambient glow */}
       <div className="absolute inset-0 pointer-events-none bg-radial from-purple-600/20 via-purple-900/5 to-transparent opacity-80 blur-3xl" />
@@ -166,17 +166,20 @@ export default function CharacterScene({ className = '' }) {
           }}
           className="w-full h-full"
         >
-          <Suspense fallback={null}>
-            <SceneLighting />
-            <ContactShadows
-              position={[0, -0.96, 0]}
-              opacity={0.65}
-              scale={3.6}
-              blur={2.2}
-              far={2.0}
-              color="#020408"
-            />
-            <FloatingObjects pointer={pointerRef} />
+          {/* Lighting, Shadows, and Floating Dev Artifacts render immediately */}
+          <SceneLighting />
+          <ContactShadows
+            position={[0, -0.96, 0]}
+            opacity={0.65}
+            scale={3.6}
+            blur={2.2}
+            far={2.0}
+            color="#020408"
+          />
+          <FloatingObjects pointer={pointerRef} />
+
+          {/* Character model with seamless procedural fallback during GLB fetch/parse */}
+          <Suspense fallback={<CharacterModel pointer={pointerRef} />}>
             <ModelErrorBoundary fallback={<CharacterModel pointer={pointerRef} />}>
               <RiggedCharacter pointer={pointerRef} />
             </ModelErrorBoundary>
@@ -186,7 +189,7 @@ export default function CharacterScene({ className = '' }) {
 
       {/* Floating Interactive Badge Pill */}
       <div
-        className={`absolute bottom-4 right-4 sm:bottom-6 sm:right-8 pointer-events-none transition-all duration-500 flex items-center gap-2 px-3.5 py-1.5 rounded-full border border-purple-500/25 bg-dark-surface/85 backdrop-blur-md shadow-lg ${
+        className={`absolute bottom-3 right-3 sm:bottom-4 sm:right-4 z-10 pointer-events-none transition-all duration-500 flex items-center gap-2 px-3 py-1.5 rounded-full border border-purple-500/25 bg-dark-surface/90 backdrop-blur-md shadow-lg ${
           isInteracting ? 'opacity-40 scale-95' : 'opacity-90 scale-100'
         }`}
       >

@@ -6,9 +6,10 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 5173,
+    strictPort: true,
     host: true, // Listen on all local addresses (both 127.0.0.1 and ::1/localhost)
     watch: {
-      ignored: ['**/.git/**', '**/public/models/**', '**/dist/**'],
+      ignored: ['**/.git/**', '**/public/models/**', '**/dist/**', '**/*.nosync/**'],
     },
   },
   optimizeDeps: {
