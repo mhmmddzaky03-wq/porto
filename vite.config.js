@@ -7,5 +7,11 @@ export default defineConfig({
   server: {
     port: 5173,
     host: true, // Listen on all local addresses (both 127.0.0.1 and ::1/localhost)
+    watch: {
+      ignored: ['**/.git/**', '**/public/models/**', '**/dist/**'],
+    },
+  },
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'three', '@react-three/fiber', '@react-three/drei', 'lenis'],
   },
 });
