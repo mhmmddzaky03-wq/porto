@@ -1,9 +1,12 @@
-import React, { useRef, useState, useEffect, useCallback, Suspense, Component } from 'react';
+import React, { useRef, useState, useEffect, useCallback, Suspense, Component, lazy } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { ContactShadows } from '@react-three/drei';
 import SceneLighting from './SceneLighting';
 import CharacterModel from './CharacterModel';
 import FloatingObjects from './FloatingObjects';
+
+// Lazy load RiggedCharacter so it only evaluates when a valid GLB is detected
+const RiggedCharacter = lazy(() => import('./RiggedCharacter'));
 
 /**
  * ErrorBoundary for WebGL Canvas
@@ -80,9 +83,20 @@ export default function CharacterScene({ className = '' }) {
   const pointerRef = useRef({ x: 0, y: 0 });
   const [isSupported, setIsSupported] = useState(true);
   const [isInteracting, setIsInteracting] = useState(false);
+  const [hasCustomModel, setHasCustomModel] = useState(false);
 
   useEffect(() => {
     setIsSupported(checkWebGLSupport());
+
+    // Check whether a custom rigged GLB model has been placed in public/models/
+    fetch('/models/dzaky-avatar.glb', { method: 'HEAD' })
+      .then((res) => {
+        const ct = res.headers.get('content-type') || '';
+        if (res.ok && !ct.includes('text/html')) {
+          setHasCustomModel(true);
+        }
+      })
+      .catch(() => {});
   }, []);
 
   // Track pointer movements relative to the container center normalized to [-1, 1]
@@ -147,7 +161,11 @@ export default function CharacterScene({ className = '' }) {
               color="#020408"
             />
             <FloatingObjects pointer={pointerRef} />
-            <CharacterModel pointer={pointerRef} />
+            {hasCustomModel ? (
+              <RiggedCharacter modelPath="/models/dzaky-avatar.glb" pointer={pointerRef} />
+            ) : (
+              <CharacterModel pointer={pointerRef} />
+            )}
           </Suspense>
         </Canvas>
       </CanvasErrorBoundary>
