@@ -1,17 +1,44 @@
-import React, { useRef, useState, useEffect, useCallback, Suspense, Component, lazy } from 'react';
+import React, { useRef, useState, useEffect, useCallback, Suspense, Component } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { ContactShadows } from '@react-three/drei';
 import SceneLighting from './SceneLighting';
 import CharacterModel from './CharacterModel';
 import FloatingObjects from './FloatingObjects';
+import RiggedCharacter, { preloadModel } from './RiggedCharacter';
 
-// Lazy load RiggedCharacter so it only evaluates when a valid GLB is detected
-const RiggedCharacter = lazy(() => import('./RiggedCharacter'));
+// Preload the GLB model in the browser early
+preloadModel('/models/dzaky-avatar.glb');
 
 /**
- * ErrorBoundary for WebGL Canvas
- * Ensures that if a device loses WebGL context or encounters an unsupported GPU feature,
- * the portfolio stays completely functional and displays a graceful fallback.
+ * ModelErrorBoundary
+ * Catches any model loading / asset parsing issues inside the WebGL tree
+ * and falls back to the stylized procedural CharacterModel seamlessly.
+ */
+class ModelErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, info) {
+    console.warn('GLB character load failed, falling back to procedural model:', error, info);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
+
+/**
+ * CanvasErrorBoundary
+ * Catches WebGL device / GPU context loss and renders a sleek high-tier fallback card.
  */
 class CanvasErrorBoundary extends Component {
   constructor(props) {
@@ -52,7 +79,7 @@ function checkWebGLSupport() {
 }
 
 /**
- * Stylized Fallback component for devices without WebGL or low memory
+ * Stylized Fallback component for devices without WebGL
  */
 function CharacterFallback() {
   return (
@@ -83,20 +110,9 @@ export default function CharacterScene({ className = '' }) {
   const pointerRef = useRef({ x: 0, y: 0 });
   const [isSupported, setIsSupported] = useState(true);
   const [isInteracting, setIsInteracting] = useState(false);
-  const [hasCustomModel, setHasCustomModel] = useState(false);
 
   useEffect(() => {
     setIsSupported(checkWebGLSupport());
-
-    // Check whether a custom rigged GLB model has been placed in public/models/
-    fetch('/models/dzaky-avatar.glb', { method: 'HEAD' })
-      .then((res) => {
-        const ct = res.headers.get('content-type') || '';
-        if (res.ok && !ct.includes('text/html')) {
-          setHasCustomModel(true);
-        }
-      })
-      .catch(() => {});
   }, []);
 
   // Track pointer movements relative to the container center normalized to [-1, 1]
@@ -153,19 +169,17 @@ export default function CharacterScene({ className = '' }) {
           <Suspense fallback={null}>
             <SceneLighting />
             <ContactShadows
-              position={[0, -1.2, 0]}
-              opacity={0.55}
-              scale={3.8}
-              blur={2.4}
-              far={2.5}
+              position={[0, -0.96, 0]}
+              opacity={0.65}
+              scale={3.6}
+              blur={2.2}
+              far={2.0}
               color="#020408"
             />
             <FloatingObjects pointer={pointerRef} />
-            {hasCustomModel ? (
-              <RiggedCharacter modelPath="/models/dzaky-avatar.glb" pointer={pointerRef} />
-            ) : (
-              <CharacterModel pointer={pointerRef} />
-            )}
+            <ModelErrorBoundary fallback={<CharacterModel pointer={pointerRef} />}>
+              <RiggedCharacter pointer={pointerRef} />
+            </ModelErrorBoundary>
           </Suspense>
         </Canvas>
       </CanvasErrorBoundary>
@@ -181,7 +195,7 @@ export default function CharacterScene({ className = '' }) {
           <span className="relative inline-flex rounded-full h-2 w-2 bg-purple-500" />
         </span>
         <span className="text-[11px] font-mono text-neutral-300">
-          Dzaky Edition • Interactive 3D
+          Dzaky Edition • Click to Wave 👋
         </span>
       </div>
     </div>
