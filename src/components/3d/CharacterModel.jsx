@@ -3,21 +3,22 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 
 /**
- * CharacterModel — "Dzaky Edition" Designer Vinyl Toy
+ * CharacterModel — "Dzaky Edition" Premium Designer Vinyl Toy
  * 
- * Faithfully crafted based on public/references/avatar-reference.png:
- * - Seated in a futuristic sleek pod/egg chair on a glowing neon purple pedestal
- * - Charismatic crossed-leg sitting pose with right hand resting thoughtfully under chin
- * - Cute oversized vinyl toy proportions with warm tan skin (#CF9367)
- * - Sculpted fluffy black curly hair with soft volumetric curls
- * - Polished silver royal crown with colorful cabochon gems (ruby, emerald, sapphire, topaz)
- * - Tailored dark gray formal suit jacket, white collared shirt, black tie, and pocket square
- * - Stylish black & white designer sneakers
- * - Smooth cursor-tracking head rotation & independent eye gaze tracking
- * - Natural idle breathing and procedural eyelid blinking
+ * Crafted to the visual standards of collectible designer art toys (Pop Mart, Coarse, KAWS):
+ * - Smooth organic geometry with high subdivision and zero visible joint gaps
+ * - Seamless limb transitions and sculpted fluffy hairstyle
+ * - Seated in a modern pod chair with crossed legs and stylish designer sneakers
+ * - Iconic "Thinker" pose with right hand gently supporting the chin/cheek
+ * - Fluffy black curly hair with sculpted organic waves
+ * - Warm tan skin tone (#CF9367) with smooth satin vinyl finish
+ * - Polished silver royal crown with 5 cabochon gemstone spheres
+ * - Expressive glossy eyes with clear cornea depth, dual specular catchlights & procedural blinking
+ * - Tailored dark charcoal formal suit jacket, crisp white shirt, black tie, and pocket square
+ * - Delta-time damped smooth mouse tracking for head and eyes
  */
 export default function CharacterModel({ pointer }) {
-  // Animation & Group Refs
+  // Animation Refs
   const rootGroupRef = useRef(null);
   const headGroupRef = useRef(null);
   const crownGroupRef = useRef(null);
@@ -28,156 +29,170 @@ export default function CharacterModel({ pointer }) {
   const torsoGroupRef = useRef(null);
   const rightArmGroupRef = useRef(null);
 
-  // Eyelid blink state
+  // Procedural blinking state
   const blinkStateRef = useRef({
     isBlinking: false,
-    nextBlinkTime: 2.5,
+    nextBlinkTime: 2.2,
     blinkProgress: 0,
-    blinkDuration: 0.16,
+    blinkDuration: 0.15,
   });
 
-  // Reusable memoized materials
+  // High-Quality PBR Materials with controlled roughness & metallic properties
   const materials = useMemo(() => {
     return {
-      // Warm medium tan skin with soft satin vinyl sheen
+      // Warm medium tan skin with soft satin vinyl sheen (Pop Mart / Vinyl Toy aesthetic)
       vinylSkin: new THREE.MeshStandardMaterial({
-        color: '#CF9367',
-        roughness: 0.42,
-        metalness: 0.05,
+        color: '#D49B6F',
+        roughness: 0.36,
+        metalness: 0.04,
       }),
-      // Cheeks warm blush
+      // Cheeks soft warm blush
       blush: new THREE.MeshBasicMaterial({
-        color: '#E07A5F',
+        color: '#E27D60',
         transparent: true,
-        opacity: 0.35,
+        opacity: 0.32,
       }),
-      // Fluffy Black Hair (soft matte vinyl)
+      // Fluffy Black Hair (Deep graphite black with soft satin specular)
       hair: new THREE.MeshStandardMaterial({
-        color: '#12141A',
-        roughness: 0.75,
-        metalness: 0.05,
+        color: '#13161F',
+        roughness: 0.58,
+        metalness: 0.12,
       }),
-      // Polished Silver Royal Crown
+      // Polished Silver Royal Crown (High reflectivity chrome)
       crownSilver: new THREE.MeshStandardMaterial({
-        color: '#E8ECF2',
-        roughness: 0.15,
-        metalness: 0.95,
+        color: '#F1F5F9',
+        roughness: 0.12,
+        metalness: 0.96,
       }),
-      // Crown Gems
+      // Crown Cabochon Gemstones (Vibrant refractive gem appearance)
       gemRuby: new THREE.MeshStandardMaterial({
-        color: '#FF2A4B',
+        color: '#EF4444',
         emissive: '#DC2626',
-        emissiveIntensity: 0.8,
-        roughness: 0.1,
-        metalness: 0.3,
+        emissiveIntensity: 0.85,
+        roughness: 0.08,
+        metalness: 0.2,
       }),
       gemEmerald: new THREE.MeshStandardMaterial({
         color: '#10B981',
         emissive: '#059669',
-        emissiveIntensity: 0.8,
-        roughness: 0.1,
-        metalness: 0.3,
+        emissiveIntensity: 0.85,
+        roughness: 0.08,
+        metalness: 0.2,
       }),
       gemSapphire: new THREE.MeshStandardMaterial({
         color: '#3B82F6',
         emissive: '#2563EB',
-        emissiveIntensity: 0.8,
-        roughness: 0.1,
-        metalness: 0.3,
+        emissiveIntensity: 0.85,
+        roughness: 0.08,
+        metalness: 0.2,
+      }),
+      gemAmethyst: new THREE.MeshStandardMaterial({
+        color: '#A855F7',
+        emissive: '#9333EA',
+        emissiveIntensity: 0.85,
+        roughness: 0.08,
+        metalness: 0.2,
       }),
       gemTopaz: new THREE.MeshStandardMaterial({
         color: '#F59E0B',
         emissive: '#D97706',
-        emissiveIntensity: 0.8,
-        roughness: 0.1,
-        metalness: 0.3,
+        emissiveIntensity: 0.85,
+        roughness: 0.08,
+        metalness: 0.2,
       }),
-      // Tailored Dark Gray Formal Suit
+      // Tailored Dark Charcoal Formal Suit (Refined weave with soft sheen)
       suitDarkGray: new THREE.MeshStandardMaterial({
-        color: '#222631',
-        roughness: 0.5,
-        metalness: 0.12,
+        color: '#1E232E',
+        roughness: 0.52,
+        metalness: 0.14,
       }),
       suitLapel: new THREE.MeshStandardMaterial({
-        color: '#1A1E27',
-        roughness: 0.35,
-        metalness: 0.25,
+        color: '#161922',
+        roughness: 0.38,
+        metalness: 0.22,
       }),
       // Crisp White Collared Dress Shirt & Pocket Square
       shirtWhite: new THREE.MeshStandardMaterial({
         color: '#F8FAFC',
-        roughness: 0.4,
+        roughness: 0.35,
         metalness: 0.05,
       }),
       // Sleek Black Formal Necktie
       tieBlack: new THREE.MeshStandardMaterial({
         color: '#0A0D14',
-        roughness: 0.25,
-        metalness: 0.4,
+        roughness: 0.28,
+        metalness: 0.35,
       }),
-      // Eyes (Glossy Designer Toy Sclera & Pupils)
+      // Eyes: Glossy White Sclera
       eyeWhite: new THREE.MeshStandardMaterial({
         color: '#FFFFFF',
-        roughness: 0.08,
+        roughness: 0.06,
         metalness: 0.0,
       }),
+      // Eyes: Deep Espresso-Navy Iris
       eyeIris: new THREE.MeshStandardMaterial({
-        color: '#0D1424',
+        color: '#0B132B',
         roughness: 0.1,
         metalness: 0.25,
       }),
+      // Eyes: Pure Deep Black Pupil
       eyePupil: new THREE.MeshBasicMaterial({
-        color: '#020408',
+        color: '#010409',
       }),
+      // Eyes: Brilliant Specular Catchlights
       eyeCatchlight: new THREE.MeshBasicMaterial({
         color: '#FFFFFF',
       }),
-      // Subtle Thin Mustache & Eyebrows
+      // Facial Grooming: Thin Mustache & Eyebrows
       facialHair: new THREE.MeshStandardMaterial({
-        color: '#0D111A',
+        color: '#0E131F',
         roughness: 0.6,
         metalness: 0.1,
       }),
       // Gentle Smile Mouth
       mouth: new THREE.MeshBasicMaterial({
-        color: '#5C3127',
+        color: '#522820',
       }),
-      // Futuristic Egg Chair Outer Shell (Sleek Obsidian Black)
+      // Modern Pod Chair Shell (Matte Obsidian)
       chairShell: new THREE.MeshStandardMaterial({
-        color: '#11141E',
-        roughness: 0.3,
-        metalness: 0.65,
-        side: THREE.DoubleSide,
+        color: '#10131B',
+        roughness: 0.32,
+        metalness: 0.55,
       }),
-      // Egg Chair Inner Cushion (Plush Dark Velvet)
+      chairRim: new THREE.MeshStandardMaterial({
+        color: '#A855F7',
+        emissive: '#7C3AED',
+        emissiveIntensity: 0.9,
+        roughness: 0.2,
+        metalness: 0.7,
+      }),
       chairCushion: new THREE.MeshStandardMaterial({
-        color: '#0D1017',
-        roughness: 0.7,
-        metalness: 0.1,
-        side: THREE.DoubleSide,
+        color: '#0C0E15',
+        roughness: 0.72,
+        metalness: 0.08,
       }),
       // Pedestal Base (Dark Brushed Titanium)
       pedestalBase: new THREE.MeshStandardMaterial({
-        color: '#181C26',
-        roughness: 0.28,
+        color: '#161924',
+        roughness: 0.25,
         metalness: 0.85,
       }),
-      // Neon Purple LED Ring
+      // Pedestal Neon Purple LED Ring
       neonPurple: new THREE.MeshStandardMaterial({
-        color: '#C084FC',
+        color: '#D8B4FE',
         emissive: '#A855F7',
-        emissiveIntensity: 2.2,
+        emissiveIntensity: 2.4,
         roughness: 0.1,
       }),
       // Designer Sneakers
       sneakerBlack: new THREE.MeshStandardMaterial({
-        color: '#141822',
-        roughness: 0.4,
+        color: '#12151D',
+        roughness: 0.38,
         metalness: 0.1,
       }),
       sneakerWhite: new THREE.MeshStandardMaterial({
         color: '#FFFFFF',
-        roughness: 0.35,
+        roughness: 0.32,
         metalness: 0.05,
       }),
     };
@@ -189,16 +204,22 @@ export default function CharacterModel({ pointer }) {
     const py = pointer?.current?.y || 0;
 
     // ----------------------------------------------------
-    // 1. Natural Idle Breathing & Micro-Life
+    // 1. Natural Breathing & Subtle Floating Idle Motion
     // ----------------------------------------------------
     const breathCycle = Math.sin(t * 1.8);
-    const microLifeX = Math.sin(t * 0.7) * 0.015;
-    const microLifeY = Math.cos(t * 0.9) * 0.01;
+    const floatCycle = Math.sin(t * 0.9) * 0.015;
+    const microLifeX = Math.sin(t * 0.7) * 0.012;
+    const microLifeY = Math.cos(t * 0.8) * 0.008;
 
-    // Torso breathing lift
+    // Root subtle micro-float
+    if (rootGroupRef.current) {
+      rootGroupRef.current.position.y = -0.38 + floatCycle;
+    }
+
+    // Torso breathing lift and subtle chest expansion
     if (torsoGroupRef.current) {
-      torsoGroupRef.current.position.y = 0.28 + breathCycle * 0.008;
-      const targetTorsoYaw = px * 0.12 + microLifeX * 0.5;
+      torsoGroupRef.current.position.y = 0.22 + breathCycle * 0.007;
+      const targetTorsoYaw = px * 0.1 + microLifeX * 0.5;
       torsoGroupRef.current.rotation.y = THREE.MathUtils.damp(
         torsoGroupRef.current.rotation.y,
         targetTorsoYaw,
@@ -207,18 +228,18 @@ export default function CharacterModel({ pointer }) {
       );
     }
 
-    // Right arm subtle breathing compensation
+    // Right arm subtle compensation
     if (rightArmGroupRef.current) {
-      rightArmGroupRef.current.rotation.z = -0.05 + breathCycle * 0.008;
+      rightArmGroupRef.current.rotation.z = -0.04 + breathCycle * 0.006;
     }
 
     // ----------------------------------------------------
-    // 2. Head Tracking (Follows Mouse with Toy Damping)
+    // 2. Smooth Damped Head Tracking (Clamped Natural Limits)
     // ----------------------------------------------------
     if (headGroupRef.current) {
-      const targetHeadYaw = px * 0.48 + microLifeX;
-      const targetHeadPitch = -py * 0.28 + microLifeY;
-      const targetHeadRoll = -px * 0.08;
+      const targetHeadYaw = Math.max(-0.45, Math.min(0.45, px * 0.44 + microLifeX));
+      const targetHeadPitch = Math.max(-0.25, Math.min(0.25, -py * 0.26 + microLifeY));
+      const targetHeadRoll = Math.max(-0.08, Math.min(0.08, -px * 0.07));
 
       headGroupRef.current.rotation.y = THREE.MathUtils.damp(
         headGroupRef.current.rotation.y,
@@ -240,16 +261,16 @@ export default function CharacterModel({ pointer }) {
       );
     }
 
-    // Subtle crown idle shimmer
+    // Crown idle shimmer
     if (crownGroupRef.current) {
-      crownGroupRef.current.rotation.y = Math.sin(t * 0.7) * 0.03;
+      crownGroupRef.current.rotation.y = Math.sin(t * 0.7) * 0.025;
     }
 
     // ----------------------------------------------------
-    // 3. Independent Eye Gaze Tracking
+    // 3. Dynamic Eye Tracking (Lead gaze with high responsiveness)
     // ----------------------------------------------------
-    const eyeTargetYaw = px * 0.32;
-    const eyeTargetPitch = -py * 0.26;
+    const eyeTargetYaw = Math.max(-0.35, Math.min(0.35, px * 0.32));
+    const eyeTargetPitch = Math.max(-0.25, Math.min(0.25, -py * 0.24));
 
     if (leftEyeRef.current) {
       leftEyeRef.current.rotation.y = THREE.MathUtils.damp(
@@ -287,7 +308,7 @@ export default function CharacterModel({ pointer }) {
     if (!blink.isBlinking && t >= blink.nextBlinkTime) {
       blink.isBlinking = true;
       blink.blinkProgress = 0;
-      blink.nextBlinkTime = t + 2.5 + Math.random() * 3.5;
+      blink.nextBlinkTime = t + 2.2 + Math.random() * 3.8;
     }
 
     if (blink.isBlinking) {
@@ -295,9 +316,9 @@ export default function CharacterModel({ pointer }) {
       let eyelidScaleY = 0;
 
       if (blink.blinkProgress <= 0.5) {
-        eyelidScaleY = blink.blinkProgress * 2;
+        eyelidScaleY = Math.sin(blink.blinkProgress * Math.PI);
       } else if (blink.blinkProgress <= 1.0) {
-        eyelidScaleY = (1.0 - blink.blinkProgress) * 2;
+        eyelidScaleY = Math.sin(blink.blinkProgress * Math.PI);
       } else {
         blink.isBlinking = false;
         eyelidScaleY = 0;
@@ -311,121 +332,109 @@ export default function CharacterModel({ pointer }) {
   });
 
   return (
-    <group ref={rootGroupRef} position={[0, -0.42, 0]} scale={0.88}>
+    <group ref={rootGroupRef} position={[0, -0.38, 0]} scale={0.88}>
       {/* ======================================================== */}
-      {/* 1. GLOWING CIRCULAR PEDESTAL & DISPLAY BASE */}
+      {/* 1. PEDESTAL & DISPLAY BASE */}
       {/* ======================================================== */}
-      <group position={[0, -0.85, 0]}>
+      <group position={[0, -0.92, 0]}>
         {/* Tier 1: Wide Bottom Plinth */}
         <mesh position={[0, -0.06, 0]} material={materials.pedestalBase}>
-          <cylinderGeometry args={[1.45, 1.55, 0.1, 40]} />
+          <cylinderGeometry args={[1.4, 1.48, 0.1, 48]} />
         </mesh>
         {/* Glowing Neon Purple LED Ring */}
         <mesh position={[0, -0.01, 0]} material={materials.neonPurple}>
-          <torusGeometry args={[1.42, 0.026, 16, 48]} />
+          <torusGeometry args={[1.36, 0.024, 16, 64]} />
         </mesh>
         {/* Tier 2: Step-Up Disc */}
         <mesh position={[0, 0.04, 0]} material={materials.pedestalBase}>
-          <cylinderGeometry args={[1.2, 1.28, 0.09, 36]} />
+          <cylinderGeometry args={[1.15, 1.22, 0.08, 40]} />
         </mesh>
-        {/* Chrome Chair Support Stem */}
+        {/* Chrome Support Stem */}
         <mesh position={[0, 0.28, 0]} material={materials.crownSilver}>
-          <cylinderGeometry args={[0.08, 0.12, 0.42, 24]} />
+          <cylinderGeometry args={[0.07, 0.1, 0.42, 24]} />
         </mesh>
       </group>
 
       {/* ======================================================== */}
-      {/* 2. FUTURISTIC SLEEK EGG / POD CHAIR (Open forward scoop) */}
+      {/* 2. SLEEK MODERN CHAIR BACKREST (Cradles from behind) */}
       {/* ======================================================== */}
-      <group position={[0, -0.1, -0.22]} rotation={[-0.22, 0, 0]}>
-        {/* Smooth Dark Hollow Cup Shell (Opens toward +Z) */}
-        <mesh rotation={[-Math.PI / 2 + 0.18, 0, 0]} material={materials.chairShell}>
-          <sphereGeometry args={[0.88, 32, 24, 0, Math.PI * 2, 0, Math.PI * 0.52]} />
+      <group position={[0, -0.15, -0.26]} rotation={[-0.15, 0, 0]}>
+        {/* Smooth Dark Crescent Backrest Shell */}
+        <mesh rotation={[-Math.PI / 2 + 0.25, 0, 0]} material={materials.chairShell}>
+          <sphereGeometry args={[0.82, 36, 24, 0, Math.PI * 2, 0, Math.PI * 0.46]} />
         </mesh>
-        {/* Outer Shell Glowing Purple/Dark Rim */}
-        <mesh position={[0, 0.12, 0.16]} rotation={[0.42, 0, 0]} material={materials.suitLapel}>
-          <torusGeometry args={[0.86, 0.035, 16, 40]} />
-        </mesh>
-        {/* Plush Dark Inner Cushion Base */}
-        <mesh position={[0, -0.16, 0.1]} material={materials.chairCushion}>
-          <cylinderGeometry args={[0.48, 0.44, 0.16, 24]} />
+        {/* Glowing Purple Rim Ring */}
+        <mesh position={[0, 0.16, 0.14]} rotation={[0.45, 0, 0]} material={materials.chairRim}>
+          <torusGeometry args={[0.78, 0.025, 16, 48]} />
         </mesh>
         {/* Plush Curved Backrest Cushion */}
-        <mesh position={[0, 0.18, -0.14]} scale={[0.75, 0.72, 0.35]} material={materials.chairCushion}>
-          <sphereGeometry args={[0.82, 24, 20]} />
+        <mesh position={[0, 0.14, -0.06]} scale={[0.72, 0.68, 0.28]} material={materials.chairCushion}>
+          <sphereGeometry args={[0.78, 24, 20]} />
+        </mesh>
+        {/* Plush Seat Base Cushion */}
+        <mesh position={[0, -0.18, 0.12]} material={materials.chairCushion}>
+          <cylinderGeometry args={[0.44, 0.4, 0.14, 28]} />
         </mesh>
       </group>
 
       {/* ======================================================== */}
-      {/* 3. SEATED BODY: CROSSED LEGS & SNEAKERS */}
+      {/* 3. SEATED LOWER BODY: CROSSED LEGS & SNEAKERS */}
       {/* ======================================================== */}
-      <group position={[0, 0.12, 0.18]}>
-        {/* Left Leg: Dropped down toward floor */}
-        <group position={[-0.22, -0.05, 0.05]}>
-          {/* Left Thigh (Dark Gray Suit Trousers) */}
-          <mesh position={[0, 0.02, 0.18]} rotation={[0.95, 0, 0]} material={materials.suitDarkGray}>
-            <cylinderGeometry args={[0.13, 0.115, 0.42, 16]} />
+      <group position={[0, 0.08, 0.16]}>
+        {/* Left Leg: Descending to pedestal */}
+        <group position={[-0.2, -0.04, 0.04]}>
+          {/* Thigh (Suit Trousers) */}
+          <mesh position={[0, 0.02, 0.16]} rotation={[0.95, 0, 0]} material={materials.suitDarkGray}>
+            <capsuleGeometry args={[0.11, 0.32, 16, 24]} />
           </mesh>
-          {/* Left Knee */}
-          <mesh position={[0, -0.16, 0.34]} material={materials.suitDarkGray}>
-            <sphereGeometry args={[0.115, 16, 16]} />
-          </mesh>
-          {/* Left Shin going down to pedestal */}
-          <mesh position={[0, -0.38, 0.36]} rotation={[-0.05, 0, 0]} material={materials.suitDarkGray}>
-            <cylinderGeometry args={[0.11, 0.09, 0.38, 16]} />
+          {/* Shin */}
+          <mesh position={[0, -0.32, 0.32]} rotation={[-0.04, 0, 0]} material={materials.suitDarkGray}>
+            <capsuleGeometry args={[0.095, 0.3, 16, 24]} />
           </mesh>
           {/* Left Sneaker (Floor Contact) */}
-          <group position={[0, -0.56, 0.42]} rotation={[0.06, 0.05, 0]}>
-            {/* White Rubber Sneaker Sole */}
+          <group position={[0, -0.54, 0.36]} rotation={[0.06, 0.05, 0]}>
+            {/* White Rubber Sole */}
             <mesh position={[0, -0.02, 0.04]} material={materials.sneakerWhite}>
-              <boxGeometry args={[0.16, 0.04, 0.3]} />
+              <boxGeometry args={[0.15, 0.04, 0.28]} />
             </mesh>
             {/* Black Sneaker Body */}
             <mesh position={[0, 0.04, 0.02]} material={materials.sneakerBlack}>
-              <boxGeometry args={[0.14, 0.08, 0.26]} />
+              <boxGeometry args={[0.13, 0.08, 0.24]} />
             </mesh>
-            {/* White Sneaker Toe Cap */}
-            <mesh position={[0, 0.02, 0.12]} material={materials.sneakerWhite}>
-              <sphereGeometry args={[0.075, 14, 14]} />
+            {/* White Toe Cap */}
+            <mesh position={[0, 0.02, 0.11]} material={materials.sneakerWhite}>
+              <sphereGeometry args={[0.07, 16, 16]} />
             </mesh>
-            {/* White Lace Accents */}
+            {/* White Laces */}
             <mesh position={[0, 0.075, 0.02]} material={materials.sneakerWhite}>
-              <boxGeometry args={[0.09, 0.015, 0.1]} />
+              <boxGeometry args={[0.08, 0.012, 0.09]} />
             </mesh>
           </group>
         </group>
 
-        {/* Right Leg: Crossed Horizontally over Left Knee */}
-        <group position={[0.18, 0.04, 0.08]} rotation={[-0.12, 0.28, -0.22]}>
+        {/* Right Leg: Crossed Horizontally Over Left Knee */}
+        <group position={[0.16, 0.04, 0.08]} rotation={[-0.1, 0.24, -0.2]}>
           {/* Right Thigh */}
-          <mesh position={[-0.08, 0.04, 0.18]} rotation={[1.1, -0.35, 0.2]} material={materials.suitDarkGray}>
-            <cylinderGeometry args={[0.13, 0.115, 0.42, 16]} />
+          <mesh position={[-0.06, 0.04, 0.16]} rotation={[1.1, -0.32, 0.18]} material={materials.suitDarkGray}>
+            <capsuleGeometry args={[0.11, 0.32, 16, 24]} />
           </mesh>
-          {/* Right Knee Pivot (Resting on left knee) */}
-          <mesh position={[-0.24, -0.1, 0.36]} material={materials.suitDarkGray}>
-            <sphereGeometry args={[0.12, 16, 16]} />
+          {/* Right Calf Crossing Over */}
+          <mesh position={[0.02, -0.14, 0.44]} rotation={[0.28, 0.82, -0.28]} material={materials.suitDarkGray}>
+            <capsuleGeometry args={[0.095, 0.32, 16, 24]} />
           </mesh>
-          {/* Right Calf & Shin (Crossing over) */}
-          <mesh position={[0.02, -0.16, 0.48]} rotation={[0.3, 0.8, -0.3]} material={materials.suitDarkGray}>
-            <cylinderGeometry args={[0.11, 0.095, 0.4, 16]} />
-          </mesh>
-          {/* Right Sneaker (Suspended / Crossed) */}
-          <group position={[0.26, -0.22, 0.58]} rotation={[-0.2, 0.65, 0.15]}>
-            {/* White Sneaker Sole */}
+          {/* Right Sneaker (Suspended) */}
+          <group position={[0.26, -0.2, 0.54]} rotation={[-0.2, 0.65, 0.15]}>
             <mesh position={[0, -0.02, 0.04]} material={materials.sneakerWhite}>
-              <boxGeometry args={[0.16, 0.04, 0.3]} />
+              <boxGeometry args={[0.15, 0.04, 0.28]} />
             </mesh>
-            {/* Black Sneaker Body */}
             <mesh position={[0, 0.04, 0.02]} material={materials.sneakerBlack}>
-              <boxGeometry args={[0.14, 0.08, 0.26]} />
+              <boxGeometry args={[0.13, 0.08, 0.24]} />
             </mesh>
-            {/* White Toe Cap */}
-            <mesh position={[0, 0.02, 0.12]} material={materials.sneakerWhite}>
-              <sphereGeometry args={[0.075, 14, 14]} />
+            <mesh position={[0, 0.02, 0.11]} material={materials.sneakerWhite}>
+              <sphereGeometry args={[0.07, 16, 16]} />
             </mesh>
-            {/* White Lace Accents */}
             <mesh position={[0, 0.075, 0.02]} material={materials.sneakerWhite}>
-              <boxGeometry args={[0.09, 0.015, 0.1]} />
+              <boxGeometry args={[0.08, 0.012, 0.09]} />
             </mesh>
           </group>
         </group>
@@ -434,97 +443,93 @@ export default function CharacterModel({ pointer }) {
       {/* ======================================================== */}
       {/* 4. FORMAL SUIT TORSO, ARMS & HANDS */}
       {/* ======================================================== */}
-      <group ref={torsoGroupRef} position={[0, 0.24, 0]}>
-        {/* Main Torso Core (Tailored Dark Gray Suit Jacket) */}
-        <mesh position={[0, 0.1, -0.04]} material={materials.suitDarkGray}>
-          <cylinderGeometry args={[0.34, 0.31, 0.48, 20]} />
+      <group ref={torsoGroupRef} position={[0, 0.16, 0]}>
+        {/* Main Jacket Torso */}
+        <mesh position={[0, 0.1, -0.03]} material={materials.suitDarkGray}>
+          <cylinderGeometry args={[0.34, 0.3, 0.46, 32]} />
         </mesh>
 
-        {/* Crisp White Collared Dress Shirt (V-Opening Front) */}
-        <mesh position={[0, 0.16, 0.24]} rotation={[-0.08, 0, 0]} material={materials.shirtWhite}>
-          <boxGeometry args={[0.22, 0.34, 0.1]} />
+        {/* Crisp White Shirt Front (V-Opening) */}
+        <mesh position={[0, 0.18, 0.23]} rotation={[-0.08, 0, 0]} material={materials.shirtWhite}>
+          <boxGeometry args={[0.2, 0.32, 0.08]} />
         </mesh>
 
-        {/* Left Suit Jacket Front / Lapel */}
-        <mesh position={[-0.14, 0.15, 0.27]} rotation={[0.06, 0.15, -0.18]} material={materials.suitLapel}>
-          <boxGeometry args={[0.11, 0.36, 0.06]} />
+        {/* Left Lapel */}
+        <mesh position={[-0.13, 0.17, 0.26]} rotation={[0.06, 0.14, -0.18]} material={materials.suitLapel}>
+          <boxGeometry args={[0.1, 0.34, 0.05]} />
         </mesh>
-        {/* Right Suit Jacket Front / Lapel */}
-        <mesh position={[0.14, 0.15, 0.27]} rotation={[0.06, -0.15, 0.18]} material={materials.suitLapel}>
-          <boxGeometry args={[0.11, 0.36, 0.06]} />
+        {/* Right Lapel */}
+        <mesh position={[0.13, 0.17, 0.26]} rotation={[0.06, -0.14, 0.18]} material={materials.suitLapel}>
+          <boxGeometry args={[0.1, 0.34, 0.05]} />
         </mesh>
 
         {/* White Pocket Square Handkerchief in Left Chest Pocket */}
-        <mesh position={[-0.2, 0.22, 0.29]} rotation={[0.05, 0.12, 0.1]} material={materials.shirtWhite}>
-          <boxGeometry args={[0.065, 0.025, 0.03]} />
+        <mesh position={[-0.19, 0.23, 0.28]} rotation={[0.05, 0.12, 0.1]} material={materials.shirtWhite}>
+          <boxGeometry args={[0.06, 0.025, 0.025]} />
         </mesh>
 
         {/* Formal Black Necktie Knot */}
-        <mesh position={[0, 0.28, 0.31]} material={materials.tieBlack}>
-          <boxGeometry args={[0.055, 0.05, 0.04]} />
+        <mesh position={[0, 0.29, 0.29]} material={materials.tieBlack}>
+          <boxGeometry args={[0.052, 0.05, 0.035]} />
         </mesh>
         {/* Formal Black Necktie Body */}
-        <mesh position={[0, 0.12, 0.3]} rotation={[0.08, 0, 0]} material={materials.tieBlack}>
-          <cylinderGeometry args={[0.035, 0.055, 0.28, 12]} />
+        <mesh position={[0, 0.14, 0.28]} rotation={[0.08, 0, 0]} material={materials.tieBlack}>
+          <cylinderGeometry args={[0.03, 0.05, 0.26, 16]} />
         </mesh>
 
         {/* ---------------------------------------------------- */}
-        {/* Left Arm: Resting Casually on Lap / Crossed Leg */}
+        {/* Left Arm: Smooth Continuous Sleeve Resting on Lap */}
         {/* ---------------------------------------------------- */}
-        <group position={[-0.38, 0.22, 0.02]} rotation={[0.2, 0.1, 0.25]}>
+        <group position={[-0.36, 0.2, 0.02]} rotation={[0.2, 0.1, 0.22]}>
           {/* Shoulder */}
           <mesh material={materials.suitDarkGray}>
-            <sphereGeometry args={[0.14, 16, 16]} />
+            <sphereGeometry args={[0.13, 20, 20]} />
           </mesh>
-          {/* Upper Arm */}
-          <mesh position={[-0.05, -0.18, 0.06]} rotation={[0.3, 0, 0.1]} material={materials.suitDarkGray}>
-            <cylinderGeometry args={[0.11, 0.095, 0.36, 16]} />
+          {/* Upper Arm Capsule */}
+          <mesh position={[-0.04, -0.16, 0.06]} rotation={[0.28, 0, 0.08]} material={materials.suitDarkGray}>
+            <capsuleGeometry args={[0.09, 0.26, 14, 20]} />
           </mesh>
-          {/* Forearm Angling to Knee */}
-          <mesh position={[-0.04, -0.36, 0.24]} rotation={[1.1, -0.2, 0.1]} material={materials.suitDarkGray}>
-            <cylinderGeometry args={[0.09, 0.08, 0.34, 16]} />
+          {/* Forearm Capsule Angling to Lap */}
+          <mesh position={[-0.04, -0.34, 0.22]} rotation={[1.1, -0.18, 0.08]} material={materials.suitDarkGray}>
+            <capsuleGeometry args={[0.08, 0.26, 14, 20]} />
           </mesh>
           {/* White Shirt Cuff */}
-          <mesh position={[-0.02, -0.4, 0.38]} material={materials.shirtWhite}>
-            <cylinderGeometry args={[0.075, 0.075, 0.04, 14]} />
+          <mesh position={[-0.02, -0.38, 0.35]} material={materials.shirtWhite}>
+            <cylinderGeometry args={[0.068, 0.068, 0.04, 16]} />
           </mesh>
-          {/* Resting Hand */}
-          <mesh position={[-0.01, -0.42, 0.42]} material={materials.vinylSkin}>
-            <sphereGeometry args={[0.07, 14, 14]} />
+          {/* Resting Vinyl Hand */}
+          <mesh position={[-0.01, -0.4, 0.39]} material={materials.vinylSkin}>
+            <sphereGeometry args={[0.068, 16, 16]} />
           </mesh>
         </group>
 
         {/* ---------------------------------------------------- */}
         {/* Right Arm: Iconic Chin-Rest Pose (The Thinker) */}
         {/* ---------------------------------------------------- */}
-        <group ref={rightArmGroupRef} position={[0.36, 0.2, 0.04]}>
+        <group ref={rightArmGroupRef} position={[0.34, 0.18, 0.04]}>
           {/* Shoulder */}
           <mesh material={materials.suitDarkGray}>
-            <sphereGeometry args={[0.14, 16, 16]} />
+            <sphereGeometry args={[0.13, 20, 20]} />
           </mesh>
-          {/* Upper Arm: Elbow brought forward and rested on knee */}
-          <mesh position={[0.02, -0.16, 0.18]} rotation={[1.1, -0.25, -0.3]} material={materials.suitDarkGray}>
-            <cylinderGeometry args={[0.11, 0.095, 0.36, 16]} />
+          {/* Upper Arm Capsule: Forward toward knee */}
+          <mesh position={[0.02, -0.14, 0.16]} rotation={[1.05, -0.22, -0.28]} material={materials.suitDarkGray}>
+            <capsuleGeometry args={[0.09, 0.26, 14, 20]} />
           </mesh>
-          {/* Elbow Joint */}
-          <mesh position={[0.05, -0.25, 0.34]} material={materials.suitDarkGray}>
-            <sphereGeometry args={[0.1, 14, 14]} />
-          </mesh>
-          {/* Forearm: Angling Upward toward Chin */}
-          <mesh position={[-0.08, 0.02, 0.34]} rotation={[-1.25, 0.35, 0.35]} material={materials.suitDarkGray}>
-            <cylinderGeometry args={[0.09, 0.08, 0.36, 16]} />
+          {/* Forearm Capsule: Angling Upward to Chin */}
+          <mesh position={[-0.07, 0.03, 0.32]} rotation={[-1.25, 0.32, 0.32]} material={materials.suitDarkGray}>
+            <capsuleGeometry args={[0.08, 0.28, 14, 20]} />
           </mesh>
           {/* White Shirt Cuff */}
-          <mesh position={[-0.15, 0.2, 0.32]} material={materials.shirtWhite}>
-            <cylinderGeometry args={[0.075, 0.075, 0.04, 14]} />
+          <mesh position={[-0.14, 0.19, 0.3]} material={materials.shirtWhite}>
+            <cylinderGeometry args={[0.068, 0.068, 0.04, 16]} />
           </mesh>
-          {/* Right Hand: Curled softly supporting right chin/cheek */}
-          <mesh position={[-0.17, 0.25, 0.34]} material={materials.vinylSkin}>
-            <sphereGeometry args={[0.075, 14, 14]} />
+          {/* Right Hand: Supporting right cheek/chin */}
+          <mesh position={[-0.16, 0.24, 0.32]} material={materials.vinylSkin}>
+            <sphereGeometry args={[0.072, 18, 18]} />
           </mesh>
-          {/* Finger Knuckles Accent */}
-          <mesh position={[-0.15, 0.27, 0.38]} material={materials.vinylSkin}>
-            <capsuleGeometry args={[0.022, 0.05, 4, 8]} />
+          {/* Soft Knuckle / Finger Curves */}
+          <mesh position={[-0.14, 0.26, 0.36]} material={materials.vinylSkin}>
+            <capsuleGeometry args={[0.02, 0.045, 6, 10]} />
           </mesh>
         </group>
       </group>
@@ -532,258 +537,256 @@ export default function CharacterModel({ pointer }) {
       {/* ======================================================== */}
       {/* 5. OVERSIZED CUTE VINYL TOY HEAD & CROWN */}
       {/* ======================================================== */}
-      <group position={[0, 0.76, 0]}>
-        {/* Cute Vinyl Neck */}
-        <mesh position={[0, -0.04, 0]} material={materials.vinylSkin}>
-          <cylinderGeometry args={[0.14, 0.16, 0.14, 20]} />
+      <group position={[0, 0.77, 0]}>
+        {/* Neck Seamless Collar Ring */}
+        <mesh position={[0, -0.05, 0]} material={materials.vinylSkin}>
+          <cylinderGeometry args={[0.14, 0.17, 0.12, 28]} />
         </mesh>
 
-        {/* Head Rotation Group (Mouse Look Tracking) */}
+        {/* Head Rotation Pivot (Damped Mouse Look Tracking) */}
         <group ref={headGroupRef} position={[0, 0.18, 0]}>
-          {/* Main Oversized Head (Cute Chibi Proportions) */}
-          <mesh position={[0, 0.1, 0]} material={materials.vinylSkin}>
-            <sphereGeometry args={[0.45, 32, 28]} />
+          {/* Main Stylized Head Sphere (High Subdivision 48x48) */}
+          <mesh position={[0, 0.06, 0]} material={materials.vinylSkin}>
+            <sphereGeometry args={[0.48, 48, 48]} />
           </mesh>
 
-          {/* Chubby Cheeks Volume */}
-          <mesh position={[0, -0.06, 0.12]} rotation={[0.22, 0, 0]} material={materials.vinylSkin}>
-            <coneGeometry args={[0.34, 0.36, 24]} />
+          {/* Left Chubby Cheek Cushion */}
+          <mesh position={[-0.22, -0.04, 0.36]} scale={[1.1, 0.9, 0.8]} material={materials.vinylSkin}>
+            <sphereGeometry args={[0.15, 24, 24]} />
+          </mesh>
+          {/* Right Chubby Cheek Cushion */}
+          <mesh position={[0.22, -0.04, 0.36]} scale={[1.1, 0.9, 0.8]} material={materials.vinylSkin}>
+            <sphereGeometry args={[0.15, 24, 24]} />
           </mesh>
 
           {/* Left Ear */}
-          <mesh position={[-0.44, 0.08, -0.02]} rotation={[0, 0.2, -0.1]} material={materials.vinylSkin}>
-            <capsuleGeometry args={[0.05, 0.1, 8, 12]} />
+          <mesh position={[-0.47, 0.05, 0]} rotation={[0, 0.2, -0.1]} material={materials.vinylSkin}>
+            <capsuleGeometry args={[0.045, 0.09, 8, 16]} />
           </mesh>
           {/* Right Ear */}
-          <mesh position={[0.44, 0.08, -0.02]} rotation={[0, -0.2, 0.1]} material={materials.vinylSkin}>
-            <capsuleGeometry args={[0.05, 0.1, 8, 12]} />
+          <mesh position={[0.47, 0.05, 0]} rotation={[0, -0.2, 0.1]} material={materials.vinylSkin}>
+            <capsuleGeometry args={[0.045, 0.09, 8, 16]} />
           </mesh>
 
           {/* Left Cheek Warm Blush */}
-          <mesh position={[-0.24, 0.02, 0.39]} rotation={[0, -0.2, 0]} material={materials.blush}>
-            <circleGeometry args={[0.06, 16]} />
+          <mesh position={[-0.24, -0.02, 0.43]} rotation={[0, -0.25, 0]} material={materials.blush}>
+            <circleGeometry args={[0.06, 20]} />
           </mesh>
           {/* Right Cheek Warm Blush */}
-          <mesh position={[0.24, 0.02, 0.39]} rotation={[0, 0.2, 0]} material={materials.blush}>
-            <circleGeometry args={[0.06, 16]} />
+          <mesh position={[0.24, -0.02, 0.43]} rotation={[0, 0.25, 0]} material={materials.blush}>
+            <circleGeometry args={[0.06, 20]} />
           </mesh>
 
           {/* ======================================================== */}
-          {/* FLUFFY BLACK CURLY HAIRSTYLE */}
+          {/* SCULPTED FLUFFY BLACK CURLY HAIRSTYLE */}
           {/* ======================================================== */}
-          <group position={[0, 0.16, -0.02]}>
-            {/* Core Hair Shell */}
-            <mesh position={[0, 0.14, -0.05]} material={materials.hair}>
-              <sphereGeometry args={[0.46, 24, 20]} />
+          <group position={[0, 0.12, -0.02]}>
+            {/* Core Hair Cap Shell */}
+            <mesh position={[0, 0.08, -0.02]} material={materials.hair}>
+              <sphereGeometry args={[0.5, 48, 36, 0, Math.PI * 2, 0, Math.PI * 0.56]} />
             </mesh>
-            {/* Forehead Front Curls & Waves */}
-            <mesh position={[0, 0.3, 0.32]} material={materials.hair}>
-              <sphereGeometry args={[0.18, 16, 16]} />
+
+            {/* Forehead Curly Waves (Nestled organically across hairline) */}
+            <mesh position={[0, 0.26, 0.36]} material={materials.hair}>
+              <sphereGeometry args={[0.16, 20, 20]} />
             </mesh>
-            <mesh position={[-0.18, 0.28, 0.3]} material={materials.hair}>
-              <sphereGeometry args={[0.17, 16, 16]} />
+            <mesh position={[-0.16, 0.24, 0.34]} material={materials.hair}>
+              <sphereGeometry args={[0.15, 20, 20]} />
             </mesh>
-            <mesh position={[0.18, 0.28, 0.3]} material={materials.hair}>
-              <sphereGeometry args={[0.17, 16, 16]} />
+            <mesh position={[0.16, 0.24, 0.34]} material={materials.hair}>
+              <sphereGeometry args={[0.15, 20, 20]} />
             </mesh>
-            <mesh position={[-0.32, 0.22, 0.22]} material={materials.hair}>
-              <sphereGeometry args={[0.16, 14, 14]} />
+            <mesh position={[-0.3, 0.18, 0.28]} material={materials.hair}>
+              <sphereGeometry args={[0.14, 18, 18]} />
             </mesh>
-            <mesh position={[0.32, 0.22, 0.22]} material={materials.hair}>
-              <sphereGeometry args={[0.16, 14, 14]} />
+            <mesh position={[0.3, 0.18, 0.28]} material={materials.hair}>
+              <sphereGeometry args={[0.14, 18, 18]} />
             </mesh>
 
             {/* Top Volumetric Hair Puffs */}
-            <mesh position={[0, 0.44, 0.06]} material={materials.hair}>
-              <sphereGeometry args={[0.22, 16, 16]} />
+            <mesh position={[0, 0.38, 0.08]} material={materials.hair}>
+              <sphereGeometry args={[0.2, 20, 20]} />
             </mesh>
-            <mesh position={[-0.22, 0.42, 0.02]} material={materials.hair}>
-              <sphereGeometry args={[0.2, 16, 16]} />
+            <mesh position={[-0.18, 0.36, 0.04]} material={materials.hair}>
+              <sphereGeometry args={[0.18, 18, 18]} />
             </mesh>
-            <mesh position={[0.22, 0.42, 0.02]} material={materials.hair}>
-              <sphereGeometry args={[0.2, 16, 16]} />
+            <mesh position={[0.18, 0.36, 0.04]} material={materials.hair}>
+              <sphereGeometry args={[0.18, 18, 18]} />
             </mesh>
 
-            {/* Side Curls framing ears */}
-            <mesh position={[-0.42, 0.06, 0.08]} material={materials.hair}>
-              <sphereGeometry args={[0.13, 14, 14]} />
-            </mesh>
-            <mesh position={[0.42, 0.06, 0.08]} material={materials.hair}>
-              <sphereGeometry args={[0.13, 14, 14]} />
-            </mesh>
-            {/* Sideburns */}
-            <mesh position={[-0.44, -0.06, 0.04]} material={materials.hair}>
+            {/* Sideburns Framing Ears */}
+            <mesh position={[-0.43, -0.04, 0.05]} material={materials.hair}>
               <boxGeometry args={[0.06, 0.14, 0.1]} />
             </mesh>
-            <mesh position={[0.44, -0.06, 0.04]} material={materials.hair}>
+            <mesh position={[0.43, -0.04, 0.05]} material={materials.hair}>
               <boxGeometry args={[0.06, 0.14, 0.1]} />
             </mesh>
           </group>
 
           {/* ======================================================== */}
-          {/* SILVER ROYAL CROWN WITH COLORFUL EMBEDDED GEMS */}
+          {/* POLISHED SILVER ROYAL CROWN WITH CABOCHON GEMS */}
           {/* ======================================================== */}
-          <group ref={crownGroupRef} position={[0, 0.65, 0.02]} rotation={[0.08, 0, -0.06]} scale={0.34}>
-            {/* Crown Base Band Ring */}
+          <group ref={crownGroupRef} position={[0, 0.62, 0.02]} rotation={[0.08, 0, -0.05]} scale={0.34}>
+            {/* Crown Base Torus Ring Rim */}
             <mesh material={materials.crownSilver}>
-              <cylinderGeometry args={[0.62, 0.58, 0.18, 32]} />
+              <torusGeometry args={[0.62, 0.045, 24, 48]} />
             </mesh>
-            {/* Lower Band Rim */}
-            <mesh position={[0, -0.09, 0]} material={materials.crownSilver}>
-              <torusGeometry args={[0.6, 0.035, 12, 32]} />
+            {/* Crown Base Band Cylinder */}
+            <mesh position={[0, 0.05, 0]} material={materials.crownSilver}>
+              <cylinderGeometry args={[0.62, 0.58, 0.14, 36]} />
             </mesh>
 
             {/* Peak 1: Center Front */}
-            <mesh position={[0, 0.32, 0.58]} rotation={[-0.15, 0, 0]} material={materials.crownSilver}>
-              <coneGeometry args={[0.14, 0.46, 16]} />
+            <mesh position={[0, 0.28, 0.58]} rotation={[-0.15, 0, 0]} material={materials.crownSilver}>
+              <coneGeometry args={[0.13, 0.44, 20]} />
             </mesh>
-            <mesh position={[0, 0.55, 0.56]} material={materials.crownSilver}>
-              <sphereGeometry args={[0.045, 12, 12]} />
+            <mesh position={[0, 0.5, 0.55]} material={materials.crownSilver}>
+              <sphereGeometry args={[0.045, 16, 16]} />
             </mesh>
-            {/* Gem: Center Ruby */}
-            <mesh position={[0, 0.16, 0.64]} material={materials.gemRuby}>
-              <octahedronGeometry args={[0.065, 0]} />
+            {/* Center Ruby Gem */}
+            <mesh position={[0, 0.12, 0.64]} material={materials.gemRuby}>
+              <sphereGeometry args={[0.065, 18, 18]} />
             </mesh>
 
             {/* Peak 2: Front-Left */}
-            <mesh position={[-0.48, 0.28, 0.35]} rotation={[-0.1, -0.35, 0.15]} material={materials.crownSilver}>
-              <coneGeometry args={[0.13, 0.42, 16]} />
+            <mesh position={[-0.48, 0.25, 0.35]} rotation={[-0.1, -0.35, 0.15]} material={materials.crownSilver}>
+              <coneGeometry args={[0.12, 0.4, 20]} />
             </mesh>
-            <mesh position={[-0.52, 0.48, 0.38]} material={materials.crownSilver}>
-              <sphereGeometry args={[0.04, 12, 12]} />
+            <mesh position={[-0.52, 0.45, 0.37]} material={materials.crownSilver}>
+              <sphereGeometry args={[0.04, 16, 16]} />
             </mesh>
-            {/* Gem: Emerald */}
-            <mesh position={[-0.46, 0.14, 0.42]} material={materials.gemEmerald}>
-              <octahedronGeometry args={[0.06, 0]} />
+            {/* Emerald Gem */}
+            <mesh position={[-0.46, 0.1, 0.43]} material={materials.gemEmerald}>
+              <sphereGeometry args={[0.06, 18, 18]} />
             </mesh>
 
             {/* Peak 3: Front-Right */}
-            <mesh position={[0.48, 0.28, 0.35]} rotation={[-0.1, 0.35, -0.15]} material={materials.crownSilver}>
-              <coneGeometry args={[0.13, 0.42, 16]} />
+            <mesh position={[0.48, 0.25, 0.35]} rotation={[-0.1, 0.35, -0.15]} material={materials.crownSilver}>
+              <coneGeometry args={[0.12, 0.4, 20]} />
             </mesh>
-            <mesh position={[0.52, 0.48, 0.38]} material={materials.crownSilver}>
-              <sphereGeometry args={[0.04, 12, 12]} />
+            <mesh position={[0.52, 0.45, 0.37]} material={materials.crownSilver}>
+              <sphereGeometry args={[0.04, 16, 16]} />
             </mesh>
-            {/* Gem: Sapphire */}
-            <mesh position={[0.46, 0.14, 0.42]} material={materials.gemSapphire}>
-              <octahedronGeometry args={[0.06, 0]} />
+            {/* Sapphire Gem */}
+            <mesh position={[0.46, 0.1, 0.43]} material={materials.gemSapphire}>
+              <sphereGeometry args={[0.06, 18, 18]} />
             </mesh>
 
             {/* Peak 4: Back-Left */}
-            <mesh position={[-0.42, 0.26, -0.42]} rotation={[0.12, -0.3, 0.15]} material={materials.crownSilver}>
-              <coneGeometry args={[0.12, 0.38, 16]} />
+            <mesh position={[-0.42, 0.23, -0.42]} rotation={[0.12, -0.3, 0.15]} material={materials.crownSilver}>
+              <coneGeometry args={[0.11, 0.36, 18]} />
             </mesh>
-            {/* Gem: Amethyst */}
-            <mesh position={[-0.45, 0.14, -0.38]} material={materials.neonPurple}>
-              <octahedronGeometry args={[0.055, 0]} />
+            {/* Amethyst Gem */}
+            <mesh position={[-0.44, 0.1, -0.38]} material={materials.gemAmethyst}>
+              <sphereGeometry args={[0.055, 16, 16]} />
             </mesh>
 
             {/* Peak 5: Back-Right */}
-            <mesh position={[0.42, 0.26, -0.42]} rotation={[0.12, 0.3, -0.15]} material={materials.crownSilver}>
-              <coneGeometry args={[0.12, 0.38, 16]} />
+            <mesh position={[0.42, 0.23, -0.42]} rotation={[0.12, 0.3, -0.15]} material={materials.crownSilver}>
+              <coneGeometry args={[0.11, 0.36, 18]} />
             </mesh>
-            {/* Gem: Topaz */}
-            <mesh position={[0.45, 0.14, -0.38]} material={materials.gemTopaz}>
-              <octahedronGeometry args={[0.055, 0]} />
+            {/* Topaz Gem */}
+            <mesh position={[0.44, 0.1, -0.38]} material={materials.gemTopaz}>
+              <sphereGeometry args={[0.055, 16, 16]} />
             </mesh>
           </group>
 
           {/* ======================================================== */}
-          {/* FRIENDLY EXPRESSIVE FACE: EYEBROWS, NOSE, MUSTACHE, MOUTH */}
+          {/* FRIENDLY EXPRESSIVE FACE: NOSE, MUSTACHE, SMILE */}
           {/* ======================================================== */}
-          {/* Eyebrows (Horizontal expressive curved capsules) */}
-          <mesh position={[-0.16, 0.23, 0.41]} rotation={[0, 0, Math.PI / 2 - 0.12]} material={materials.facialHair}>
-            <capsuleGeometry args={[0.014, 0.11, 6, 8]} />
+          {/* Eyebrows (Horizontal curved expressive capsules) */}
+          <mesh position={[-0.16, 0.19, 0.44]} rotation={[0, 0, Math.PI / 2 - 0.12]} material={materials.facialHair}>
+            <capsuleGeometry args={[0.013, 0.1, 6, 12]} />
           </mesh>
-          <mesh position={[0.16, 0.23, 0.41]} rotation={[0, 0, -(Math.PI / 2 - 0.12)]} material={materials.facialHair}>
-            <capsuleGeometry args={[0.014, 0.11, 6, 8]} />
+          <mesh position={[0.16, 0.19, 0.44]} rotation={[0, 0, -(Math.PI / 2 - 0.12)]} material={materials.facialHair}>
+            <capsuleGeometry args={[0.013, 0.1, 6, 12]} />
           </mesh>
 
           {/* Cute Stylized Nose */}
-          <mesh position={[0, 0.09, 0.44]} rotation={[-0.12, 0, 0]} material={materials.vinylSkin}>
-            <coneGeometry args={[0.042, 0.11, 16]} />
+          <mesh position={[0, 0.05, 0.48]} rotation={[-0.1, 0, 0]} material={materials.vinylSkin}>
+            <coneGeometry args={[0.038, 0.09, 18]} />
           </mesh>
 
           {/* SUBTLE THIN MUSTACHE (Horizontal gentle wings above upper lip) */}
-          <group position={[0, 0.005, 0.44]}>
-            <mesh position={[-0.055, 0, 0]} rotation={[0, 0, Math.PI / 2 + 0.15]} material={materials.facialHair}>
-              <capsuleGeometry args={[0.012, 0.075, 6, 8]} />
+          <group position={[0, -0.015, 0.485]}>
+            <mesh position={[-0.052, 0, 0]} rotation={[0, 0, Math.PI / 2 + 0.15]} material={materials.facialHair}>
+              <capsuleGeometry args={[0.011, 0.07, 6, 10]} />
             </mesh>
-            <mesh position={[0.055, 0, 0]} rotation={[0, 0, -(Math.PI / 2 + 0.15)]} material={materials.facialHair}>
-              <capsuleGeometry args={[0.012, 0.075, 6, 8]} />
+            <mesh position={[0.052, 0, 0]} rotation={[0, 0, -(Math.PI / 2 + 0.15)]} material={materials.facialHair}>
+              <capsuleGeometry args={[0.011, 0.07, 6, 10]} />
             </mesh>
-            <mesh position={[0, 0.005, 0.005]} material={materials.facialHair}>
-              <sphereGeometry args={[0.013, 8, 8]} />
+            <mesh position={[0, 0.004, 0.005]} material={materials.facialHair}>
+              <sphereGeometry args={[0.012, 8, 8]} />
             </mesh>
           </group>
 
-          {/* Gentle Friendly Smile */}
-          <mesh position={[0, -0.065, 0.42]} rotation={[0, 0, 0]} material={materials.mouth}>
-            <capsuleGeometry args={[0.01, 0.09, 6, 8]} />
+          {/* Gentle Smile Mouth Line */}
+          <mesh position={[0, -0.075, 0.475]} material={materials.mouth}>
+            <capsuleGeometry args={[0.009, 0.08, 6, 10]} />
           </mesh>
 
           {/* ======================================================== */}
-          {/* GLOSSY DESIGNER TOY EYES WITH DYNAMIC EYE TRACKING */}
+          {/* GLOSSY DESIGNER TOY EYES WITH REALISTIC DEPTH & TRACKING */}
           {/* ======================================================== */}
           {/* Left Eye */}
-          <group position={[-0.16, 0.11, 0.36]}>
+          <group position={[-0.15, 0.08, 0.44]}>
             <group ref={leftEyeRef}>
-              {/* Glossy White Sclera */}
+              {/* Glossy White Sclera Sphere */}
               <mesh material={materials.eyeWhite}>
-                <sphereGeometry args={[0.092, 24, 24]} />
+                <sphereGeometry args={[0.092, 28, 28]} />
               </mesh>
-              {/* Dark Iris */}
-              <mesh position={[0, 0, 0.062]} material={materials.eyeIris}>
-                <sphereGeometry args={[0.068, 20, 20]} />
+              {/* Dark Espresso-Navy Iris */}
+              <mesh position={[0, 0, 0.06]} material={materials.eyeIris}>
+                <sphereGeometry args={[0.068, 24, 24]} />
               </mesh>
-              {/* Deep Black Pupil */}
-              <mesh position={[0, 0, 0.075]} material={materials.eyePupil}>
-                <sphereGeometry args={[0.045, 16, 16]} />
+              {/* Pure Velvet Black Pupil */}
+              <mesh position={[0, 0, 0.074]} material={materials.eyePupil}>
+                <sphereGeometry args={[0.044, 20, 20]} />
               </mesh>
-              {/* Main Specular Highlight Catchlight */}
-              <mesh position={[0.024, 0.024, 0.092]} material={materials.eyeCatchlight}>
-                <sphereGeometry args={[0.014, 12, 12]} />
+              {/* Primary Brilliant Catchlight */}
+              <mesh position={[0.024, 0.024, 0.088]} material={materials.eyeCatchlight}>
+                <sphereGeometry args={[0.014, 14, 14]} />
               </mesh>
-              {/* Secondary Micro Catchlight */}
-              <mesh position={[-0.018, -0.016, 0.09]} material={materials.eyeCatchlight}>
-                <sphereGeometry args={[0.007, 8, 8]} />
+              {/* Secondary Micro-Spark Catchlight */}
+              <mesh position={[-0.016, -0.014, 0.086]} material={materials.eyeCatchlight}>
+                <sphereGeometry args={[0.007, 10, 10]} />
               </mesh>
             </group>
 
             {/* Left Upper Eyelid (Procedural Blink) */}
             <mesh ref={leftEyelidRef} position={[0, 0.042, 0.02]} scale={[1, 0, 1]} material={materials.vinylSkin}>
-              <sphereGeometry args={[0.098, 20, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
+              <sphereGeometry args={[0.098, 24, 20, 0, Math.PI * 2, 0, Math.PI / 2]} />
             </mesh>
           </group>
 
           {/* Right Eye */}
-          <group position={[0.16, 0.11, 0.36]}>
+          <group position={[0.15, 0.08, 0.44]}>
             <group ref={rightEyeRef}>
-              {/* Glossy White Sclera */}
+              {/* Glossy White Sclera Sphere */}
               <mesh material={materials.eyeWhite}>
-                <sphereGeometry args={[0.092, 24, 24]} />
+                <sphereGeometry args={[0.092, 28, 28]} />
               </mesh>
-              {/* Dark Iris */}
-              <mesh position={[0, 0, 0.062]} material={materials.eyeIris}>
-                <sphereGeometry args={[0.068, 20, 20]} />
+              {/* Dark Espresso-Navy Iris */}
+              <mesh position={[0, 0, 0.06]} material={materials.eyeIris}>
+                <sphereGeometry args={[0.068, 24, 24]} />
               </mesh>
-              {/* Deep Black Pupil */}
-              <mesh position={[0, 0, 0.075]} material={materials.eyePupil}>
-                <sphereGeometry args={[0.045, 16, 16]} />
+              {/* Pure Velvet Black Pupil */}
+              <mesh position={[0, 0, 0.074]} material={materials.eyePupil}>
+                <sphereGeometry args={[0.044, 20, 20]} />
               </mesh>
-              {/* Main Specular Highlight Catchlight */}
-              <mesh position={[0.024, 0.024, 0.092]} material={materials.eyeCatchlight}>
-                <sphereGeometry args={[0.014, 12, 12]} />
+              {/* Primary Brilliant Catchlight */}
+              <mesh position={[0.024, 0.024, 0.088]} material={materials.eyeCatchlight}>
+                <sphereGeometry args={[0.014, 14, 14]} />
               </mesh>
-              {/* Secondary Micro Catchlight */}
-              <mesh position={[-0.018, -0.016, 0.09]} material={materials.eyeCatchlight}>
-                <sphereGeometry args={[0.007, 8, 8]} />
+              {/* Secondary Micro-Spark Catchlight */}
+              <mesh position={[-0.016, -0.014, 0.086]} material={materials.eyeCatchlight}>
+                <sphereGeometry args={[0.007, 10, 10]} />
               </mesh>
             </group>
 
             {/* Right Upper Eyelid (Procedural Blink) */}
             <mesh ref={rightEyelidRef} position={[0, 0.042, 0.02]} scale={[1, 0, 1]} material={materials.vinylSkin}>
-              <sphereGeometry args={[0.098, 20, 16, 0, Math.PI * 2, 0, Math.PI / 2]} />
+              <sphereGeometry args={[0.098, 24, 20, 0, Math.PI * 2, 0, Math.PI / 2]} />
             </mesh>
           </group>
         </group>

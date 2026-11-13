@@ -1,5 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback, Suspense, Component } from 'react';
 import { Canvas } from '@react-three/fiber';
+import { ContactShadows } from '@react-three/drei';
 import SceneLighting from './SceneLighting';
 import CharacterModel from './CharacterModel';
 import FloatingObjects from './FloatingObjects';
@@ -137,6 +138,14 @@ export default function CharacterScene({ className = '' }) {
         >
           <Suspense fallback={null}>
             <SceneLighting />
+            <ContactShadows
+              position={[0, -1.2, 0]}
+              opacity={0.55}
+              scale={3.8}
+              blur={2.4}
+              far={2.5}
+              color="#020408"
+            />
             <FloatingObjects pointer={pointerRef} />
             <CharacterModel pointer={pointerRef} />
           </Suspense>

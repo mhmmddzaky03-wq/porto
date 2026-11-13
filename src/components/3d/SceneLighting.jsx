@@ -2,63 +2,60 @@ import React from 'react';
 
 /**
  * SceneLighting
- * Calibrated precisely for the dark creative developer atmosphere
- * seen in public/references/avatar-reference.png:
- * - Warm frontal key light for facial vinyl clarity, skin luster, and eyes
- * - Soft cool diffuse fill light to prevent black crushing in shadows
- * - Signature violet/purple neon rim lights (#A855F7, #C084FC) highlighting
- *   the silver crown, black fluffy curls, suit lapels, and chair contours
- * - Violet floor point light illuminating the pedestal base & sneakers
+ * Calibrated studio lighting setup for the "Dzaky Edition" vinyl toy:
+ * - Warm frontal key light for vinyl skin luster, facial features, and eye reflections
+ * - Soft diffuse fill light to prevent harsh unlit shadows
+ * - Signature dual neon purple & magenta rim lights that carve out the silhouette
+ *   of the crown, hair waves, suit shoulders, and chair against the dark background
+ * - Upward violet point light simulating the glowing LED pedestal
  */
 export default function SceneLighting() {
   return (
     <>
-      {/* Ambient base with soft twilight violet tint */}
-      <ambientLight intensity={0.75} color="#151224" />
+      {/* Soft atmospheric ambient base */}
+      <ambientLight intensity={0.72} color="#141122" />
 
-      {/* Frontal Key Light - Soft Warm Studio Luster */}
+      {/* Main Frontal Key Light - Warm Studio Softbox */}
       <directionalLight
-        position={[0.8, 2.4, 3.4]}
-        intensity={1.9}
-        color="#FFF8F0"
+        position={[1.2, 2.5, 3.2]}
+        intensity={1.85}
+        color="#FFF6ED"
       />
 
-      {/* Top Diffuse Softbox */}
+      {/* Top Diffuse Soft Light */}
       <directionalLight
         position={[0, 4.0, 1.8]}
-        intensity={0.7}
+        intensity={0.65}
         color="#E2E8F0"
       />
 
-      {/* Left Cool Fill Light */}
+      {/* Left Cool Diffuse Fill Light */}
       <directionalLight
-        position={[-3.2, 1.4, 2.0]}
+        position={[-2.8, 1.5, 2.0]}
         intensity={0.65}
         color="#94A3B8"
       />
 
-      {/* Main Signature Purple Rim Light (Behind-Right) */}
-      {/* Creates the glowing purple edge on the crown, curls, and pod chair */}
+      {/* Signature Purple Neon Rim Light (Behind-Right) */}
       <directionalLight
-        position={[2.8, 2.6, -2.4]}
+        position={[2.6, 2.4, -2.4]}
         intensity={4.2}
         color="#A855F7"
       />
 
-      {/* Secondary Magenta/Violet Rim Light (Behind-Left) */}
+      {/* Secondary Magenta/Violet Edge Light (Behind-Left) */}
       <directionalLight
-        position={[-2.6, 2.2, -2.2]}
+        position={[-2.6, 2.0, -2.2]}
         intensity={2.8}
         color="#C084FC"
       />
 
-      {/* Pedestal Under-Glow Point Light */}
-      {/* Simulates the glowing purple LED ring embedded in the plinth */}
+      {/* Glowing Pedestal LED Upward Light */}
       <pointLight
-        position={[0, -0.9, 0.4]}
-        intensity={2.0}
-        color="#9333EA"
-        distance={3.5}
+        position={[0, -0.95, 0.35]}
+        intensity={2.2}
+        color="#A855F7"
+        distance={3.6}
         decay={2}
       />
     </>
